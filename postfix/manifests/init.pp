@@ -38,7 +38,7 @@ class postfix {
         ensure  => present,
         require => Package["postfix"],
         notify  => Service["postfix"],
-        # content => template("postfix/postfix.conf.erb"),
+        content => template("postfix/main.cf.erb"),
     }
 
     # Include OS specific subclasses, if necessary
