@@ -88,6 +88,7 @@ class dashboard::params  {
     }
 
     $processname = $operatingsystem ? {
+		ubuntu => "dashboard/script/server",
         default => "server",
     }
 

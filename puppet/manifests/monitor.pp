@@ -54,10 +54,12 @@ if ($puppet_server_local == true) or ($puppet_server == "$fqdn") {
     monitor::process { "puppet_process":
         process  => $operatingsystem ? {
             debian  => "ruby",
+			ubuntu  => "puppet",
             default => "${puppet::params::processname}",
         },
         argument => $operatingsystem ? {
             debian  => "${puppet::params::processname}",
+            ubuntu  => "${puppet::params::processname}",
             default => undef,
         },
         service  => "${puppet::params::servicename}",
@@ -69,7 +71,16 @@ if ($puppet_server_local == true) or ($puppet_server == "$fqdn") {
     # Process monitoring (only Puppetmaster)
 if (($puppet_server_local == true) or ($puppet_server == "$fqdn")) and ( "${puppet::params::passenger}" != "yes") {
     monitor::process { "puppetmaster_process":
-        process  => "${puppet::params::processname_server}",
+        process  => $operatingsystem ? {                                                                                                                                         
+            debian  => "ruby",                                                                                                                                                   
+            ubuntu  => "puppet",                                                                                                                                                 
+            default => "${puppet::params::processname}",                                                                                                                         
+        },                                                                                                                                                                       
+        argument => $operatingsystem ? {                                                                                                                                         
+            debian  => "${puppet::params::processname_server}",                                                                                                                         
+            ubuntu  => "${puppet::params::processname_server}",                                                                                                                         
+            default => undef,                                                                                                                                                    
+        },
         service  => "${puppet::params::servicename_server}",
         pidfile  => "${puppet::params::pidfile_server}",
         enable   => "${puppet::params::monitor_process_enable}",

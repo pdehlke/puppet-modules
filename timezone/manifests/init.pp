@@ -1,37 +1,54 @@
-class timezone {
-
-     file {
-        "timezone":
-#            mode => 644, owner => root, group => root,
-            ensure => present,
-            path => $operatingsystem ?{
-                debian  => "/etc/timezone",
-                ubuntu  => "/etc/timezone",
-                redhat  => "/etc/sysconfig/clock",
-                centos  => "/etc/sysconfig/clock",
-                suse    => "/etc/sysconfig/clock",
-                freebsd => "/etc/timezone-puppet",
-            },
-
-            content => $operatingsystem ?{
-                  default => template("timezone/timezone-${operatingsystem}"),
-            },
-#            notify => Exec["set-timezone"],
+class timezone::solaris::utc {
+  file { "/etc/default/init":
+	ensure => present,
+	source => "puppet:///modules/timezone/init";
+  }
+}
+class timezone::ubuntu {
+    package { "tzdata":
+        ensure => installed
     }
-     
-    exec {
-        "set-timezone":
-            command => $operatingsystem ?{
-                debian  => "dpkg-reconfigure -f noninteractive tzdata",
-                ubuntu  => "dpkg-reconfigure -f noninteractive tzdata",
-                redhat  => "tzdata-update",
-                centos  => "tzdata-update",
-                suse    => "FIX ME",
-                freebsd => "cp /usr/share/zoneinfo/${timezone} /etc/localtime && adjkerntz -a",
-            },
-            require => File["timezone"],
-            subscribe => File["timezone"],
-            refreshonly => true,
-    }
+}
 
+class timezone::ubuntu::utc inherits timezone::ubuntu {
+    file { "/etc/localtime":
+        require => Package["tzdata"],
+        source => "file:///usr/share/zoneinfo/UTC",
+    }
+}
+
+class timezone::arizona inherits timezone::ubuntu {
+    file { "/etc/localtime":
+        require => Package["tzdata"],
+        source => "file:///usr/share/zoneinfo/US/Arizona",
+    }
+}
+
+class timezone::central inherits timezone::ubuntu {
+    file { "/etc/localtime":
+        require => Package["tzdata"],
+        source => "file:///usr/share/zoneinfo/US/Central",
+    }
+}
+
+class timezone::ubuntu::eastern inherits timezone::ubuntu {
+    file { "/etc/localtime":
+        require => Package["tzdata"],
+        source => "file:///usr/share/zoneinfo/US/Eastern"
+    }
+}
+
+class timezone::ubuntu::pacific inherits timezone::ubuntu {
+    file { "/etc/localtime":
+        require => Package["tzdata"],
+        source => "file:///usr/share/zoneinfo/US/Pacific"
+    }
+}
+
+class timezone::ubuntu::mountain inherits timezone::ubuntu {
+    file { "/etc/localtime":
+        require => Package["tzdata"],
+        source =>
+             "file:///usr/share/zoneinfo/US/Mountain"
+    }
 }

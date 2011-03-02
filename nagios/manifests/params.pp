@@ -58,6 +58,7 @@ class nagios::params  {
 # The directory where we place automatic Nagios confingurations MUST be fixed
 # Cannot be operating system dependent
     $customconfigdir = "/etc/nagios/auto.d"
+	$debugdir = "/tmp"
 
     # Sets Nagios versions according to default package of different OS. To be updated...
     $version = $operatingsystem ? {

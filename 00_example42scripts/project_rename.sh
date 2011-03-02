@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash 
 # This scripts changes references to example42 to your project string in Example42.com modules
 # - Renames manifests and directories
 # - Changes contents

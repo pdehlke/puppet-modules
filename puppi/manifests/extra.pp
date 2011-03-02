@@ -6,7 +6,8 @@
 class puppi::extra {
 
     package { curl: ensure => present, }
-    include rsync
+    package { rsync: ensure => present, }
+
     include mailx
 
 }

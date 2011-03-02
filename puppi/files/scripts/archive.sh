@@ -39,12 +39,10 @@ while [ $# -gt 0 ]; do
   case "$1" in
     -b)
       backuproot=$2
-      [ $deploy_root ] && backuproot=$deploy_root
       action=backup
       shift 2 ;;
     -r)
       backuproot=$2
-      [ $deploy_root ] && backuproot=$deploy_root
       action=recovery
       shift 2 ;;
     -t)
@@ -75,7 +73,6 @@ while [ $# -gt 0 ]; do
       shift 2 ;;
     -o) 
       rsync_options=$2
-      [ $deploy_root ] && backuproot=$deploy_root
       shift 2 ;;
     *)
       showhelp
@@ -95,7 +92,7 @@ backup () {
 
     filelist=$storedir/filelist
     cd $predeploydir
-    find . | cut -c 3- | grep -v "^$" > $filelist
+    find . > $filelist
 
     if [ "$strategy" = "move" ] ; then 
         for file in $(cat $filelist) ; do

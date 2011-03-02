@@ -109,22 +109,22 @@ class puppet::params  {
     }
 
     $processname = $operatingsystem ? {
-        default => "puppetd",
+        default => "agent",
     }
 
     $processname_server = $operatingsystem ? {
-        default => "puppetmasterd",
+        default => "master",
     }
 
     $hasstatus = $operatingsystem ? {
         debian  => false,
-        ubuntu  => false,
+        ubuntu  => true,
         default => true,
     }
 
     $hasstatus_server = $operatingsystem ? {
         debian  => false,
-        ubuntu  => false,
+        ubuntu  => true,
         default => true,
     }
 

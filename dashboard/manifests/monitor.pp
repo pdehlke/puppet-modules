@@ -44,15 +44,26 @@ if ($dashboard_server_local == true) or ($dashboard_server == "$fqdn") {
 
     # URL monitoring 
     monitor::url { "dashboard_url":
+		target   => "${dashboard_server}",
         url      => "${dashboard::params::monitor_baseurl_real}",
         pattern  => "${dashboard::params::monitor_url_pattern}",
+        port     => "${dashboard::params::port}",
         enable   => "${dashboard::params::monitor_url_enable}",
         tool     => "${monitor_tool}",
     }
 
     # Process monitoring 
     monitor::process { "dashboard_process":
-        process  => "${dashboard::params::processname}",
+        process  => $operatingsystem ? {                                                                                                                                         
+            debian  => "ruby",                                                                                                                                                   
+            ubuntu  => "ruby",                                                                                                                                                 
+            default => "${dashboard::params::processname}",                                                                                                                         
+        },                                                                                                                                                                       
+        argument => $operatingsystem ? {                                                                                                                                         
+            debian  => "${dashboard::params::processname}",                                                                                                                         
+            ubuntu  => "${dashboard::params::processname}",                                                                                                                         
+            default => undef,                                                                                                                                                    
+        },
         service  => "${dashboard::params::servicename}",
         pidfile  => "${dashboard::params::pidfile}",
         enable   => "${dashboard::params::monitor_process_enable}",
@@ -60,15 +71,15 @@ if ($dashboard_server_local == true) or ($dashboard_server == "$fqdn") {
     }
 
     # Process monitoring (only Puppetmaster)
-if ($dashboard_server_local == true) or ($dashboard_server == "$fqdn") {
-    monitor::process { "dashboardmaster_process":
-        process  => "${dashboard::params::processname_server}",
-        service  => "${dashboard::params::servicename_server}",
-        pidfile  => "${dashboard::params::pidfile_server}",
-        enable   => "${dashboard::params::monitor_process_enable}",
-        tool     => "${monitor_tool}",
-    }
-}
+#if ($dashboard_server_local == true) or ($dashboard_server == "$fqdn") {
+#    monitor::process { "dashboardmaster_process":
+#        process  => "${dashboard::params::processname_server}",
+#        service  => "${dashboard::params::servicename_server}",
+#        pidfile  => "${dashboard::params::pidfile_server}",
+#        enable   => "${dashboard::params::monitor_process_enable}",
+#        tool     => "${monitor_tool}",
+#    }
+#}
 
     # Use a specific plugin (according to the monitor tool used)
     monitor::plugin { "dashboard_plugin":
